@@ -1,5 +1,5 @@
-import net.sf.mpxj.*;
-import net.sf.mpxj.reader.UniversalProjectReader;
+import org.mpxj.*;
+import org.mpxj.reader.UniversalProjectReader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
