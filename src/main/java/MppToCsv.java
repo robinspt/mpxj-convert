@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -107,6 +109,10 @@ public class MppToCsv {
     private static String labelFor(FieldType ft) {
         String key = keyFor(ft);
         String v = HEADER_MAP.get(key);
+        if (v == null) {
+            // Fallback: allow unqualified mapping by enum name only
+            v = HEADER_MAP.get(ft.name());
+        }
         return v != null ? v : ft.name();
     }
 
@@ -173,9 +179,14 @@ public class MppToCsv {
 
     // --- CSV helpers ---
     private static void writeCsv(Path path, String[] header, List<String[]> rows) throws IOException {
-        try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(path, StandardCharsets.UTF_8))) {
-            pw.println(joinCsv(header));
-            for (String[] row : rows) pw.println(joinCsv(row));
+        // Write UTF-8 with BOM so Excel opens Chinese correctly
+        try (OutputStream os = Files.newOutputStream(path)) {
+            // UTF-8 BOM
+            os.write(new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF});
+            try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
+                pw.println(joinCsv(header));
+                for (String[] row : rows) pw.println(joinCsv(row));
+            }
         }
     }
 
