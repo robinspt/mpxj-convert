@@ -58,7 +58,7 @@ public class MppToCsv {
     }
 
     private static void writeAllTasks(ProjectFile pf, Path csv) throws IOException {
-        java.util.List<TaskField> fields = new java.util.ArrayList<>(pf.getTasks().getPopulatedFields());
+        java.util.List<FieldType> fields = new java.util.ArrayList<>(pf.getTasks().getPopulatedFields());
         fields.sort(java.util.Comparator.comparing(FieldType::name));
         String[] header = fields.stream().map(MppToCsv::labelFor).toArray(String[]::new);
         List<String[]> rows = new ArrayList<>();
@@ -73,7 +73,7 @@ public class MppToCsv {
     }
 
     private static void writeAllResources(ProjectFile pf, Path csv) throws IOException {
-        java.util.List<ResourceField> fields = new java.util.ArrayList<>(pf.getResources().getPopulatedFields());
+        java.util.List<FieldType> fields = new java.util.ArrayList<>(pf.getResources().getPopulatedFields());
         fields.sort(java.util.Comparator.comparing(FieldType::name));
         String[] header = fields.stream().map(MppToCsv::labelFor).toArray(String[]::new);
         List<String[]> rows = new ArrayList<>();
@@ -88,7 +88,7 @@ public class MppToCsv {
     }
 
     private static void writeAllAssignments(ProjectFile pf, Path csv) throws IOException {
-        java.util.List<AssignmentField> fields = new java.util.ArrayList<>(pf.getResourceAssignments().getPopulatedFields());
+        java.util.List<FieldType> fields = new java.util.ArrayList<>(pf.getResourceAssignments().getPopulatedFields());
         fields.sort(java.util.Comparator.comparing(FieldType::name));
         String[] header = fields.stream().map(MppToCsv::labelFor).toArray(String[]::new);
         List<String[]> rows = new ArrayList<>();
