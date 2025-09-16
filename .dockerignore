@@ -1,0 +1,12 @@
+# Docker build context excludes
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+.target
+/target
+/node_modules
+.DS_Store
+*.log
+
