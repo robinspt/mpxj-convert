@@ -57,6 +57,7 @@ in="/files/input/{{$binary.data.fileName}}";
 stem="${in##*/}"; stem="${stem%.*}";
 out="/files/output/${stem}";
 mkdir -p "$out";
+chmod 777 "$out";
 if command -v docker >/dev/null 2>&1; then DOCKER=docker; elif [ -x /shared/docker ]; then DOCKER=/shared/docker; else echo "docker not found"; exit 127; fi;
 "$DOCKER" run --rm --volumes-from n8n_app \
   westrooper/mpxj-convert:latest "$in" "$out" "/files/header_zh.properties";
