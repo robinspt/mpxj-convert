@@ -8,21 +8,29 @@
 ## 获取/构建镜像
 
 - 方式 A（推荐）：从 Docker Hub 拉取
-  - docker pull westrooper/mpxj-convert:latest
+```bash
+docker pull westrooper/mpxj-convert:latest
+```
 
 - 方式 B：本地构建（多阶段：Maven + JRE）
-  - docker build -t local/mpxj-convert:latest .
+```bash
+docker build -t local/mpxj-convert:latest .
+```
 
 - 可选：本地构建 fat-jar 并直接运行
-  - mvn -q -DskipTests package
-  - java -jar target/mpxj-convert.jar /path/to/input.mpp /tmp/out
+```bash
+mvn -q -DskipTests package
+java -jar target/mpxj-convert.jar /path/to/input.mpp /tmp/out
+```
 
 ## 运行（Docker）
 
 将宿主机目录挂载到容器内 /files 后运行：
 
-- docker run --rm -v /absolute/host/folder:/files \
-    westrooper/mpxj-convert:latest /files/input.mpp /files/output/myrun [/files/header_zh.properties]
+```bash
+docker run --rm -v /absolute/host/folder:/files \
+  westrooper/mpxj-convert:latest /files/input.mpp /files/output/myrun [/files/header_zh.properties]
+```
 
 运行完成后会生成：
 - /files/output/myrun/tasks.csv
@@ -43,16 +51,18 @@
 
 在 Execute Command 节点中的示例命令：
 
-- sh -lc '
-  in="/files/input/{{$binary.data.fileName}}";
-  stem="${in##*/}"; stem="${stem%.*}";
-  out="/files/output/${stem}";
-  mkdir -p "$out";
-  if command -v docker >/dev/null 2>&1; then DOCKER=docker; elif [ -x /shared/docker ]; then DOCKER=/shared/docker; else echo "docker not found"; exit 127; fi;
-  "$DOCKER" run --rm --volumes-from n8n_app \
-    westrooper/mpxj-convert:latest "$in" "$out" "/files/header_zh.properties";
-  echo "DONE -> $out/tasks.csv $out/resources.csv $out/assignments.csv";
-  '
+```bash
+sh -lc '
+in="/files/input/{{$binary.data.fileName}}";
+stem="${in##*/}"; stem="${stem%.*}";
+out="/files/output/${stem}";
+mkdir -p "$out";
+if command -v docker >/dev/null 2>&1; then DOCKER=docker; elif [ -x /shared/docker ]; then DOCKER=/shared/docker; else echo "docker not found"; exit 127; fi;
+"$DOCKER" run --rm --volumes-from n8n_app \
+  westrooper/mpxj-convert:latest "$in" "$out" "/files/header_zh.properties";
+echo "DONE -> $out/tasks.csv $out/resources.csv $out/assignments.csv";
+'
+```
 
 情形 2：n8n 当前无法在该节点执行 `docker run`（权限/runner 沙箱限制）
 - 方案 A：将该节点切换为在 n8n 主进程执行（关闭 runners），或为 runner 提供与主进程等同的挂载：`/var/run/docker.sock` 与共享的 Docker 可执行文件路径（如 `/shared/docker`）。
